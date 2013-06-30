@@ -1,0 +1,41 @@
+#
+# THIS FILE IS MANAGED BY PUPPET
+# <%= file %>
+#
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto eth0
+iface eth0 inet static
+        address <%= address %>
+        netmask <%= netmask %>
+        network <%= network %>
+        broadcast <%= broadcast %>
+        gateway <%= gateway %>
+
+# LXC bridge
+auto br0
+iface br0 inet static
+    address 192.168.2.1
+    netmask 255.255.255.0
+
+    post-up echo 1 > /proc/sys/net/ipv4/ip_forward
+    post-up iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+#    pre-down echo 0 > /proc/sys/net/ipv4/ip_forward
+#    pre-down iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+
+    bridge_ports none
+    bridge_stp off
+	
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
